@@ -1,5 +1,5 @@
 # Use latest Fedora image as the base
-FROM fedora
+FROM centos:centos7
 
 # Update base image
 RUN yum -y update && yum clean all
@@ -11,7 +11,10 @@ RUN rpm -Uvh https://kojipkgs.fedoraproject.org//packages/bash/4.2.48/2.fc20/x86
 # saxon can be used to execute configuration transformation using XSLT
 # augeas is a great tool to edit any configuration files (XML too)
 # bsdtar can be used to unpack zip files using pipes
-RUN yum -y install java-1.7.0-openjdk-devel xmlstarlet saxon augeas bsdtar && yum clean all
+RUN yum -y install java-1.8.0-openjdk-devel xmlstarlet saxon augeas bsdtar && yum clean all
+
+# default centos7 image doesn't have tar installed
+RUN yum -y install tar
 
 # Set the WILDFLY_VERSION env variable
 ENV WILDFLY_VERSION 8.1.0.Final
@@ -35,7 +38,7 @@ ENV JBOSS_HOME /opt/wildfly
 EXPOSE 8080 9990
 
 # Run everything below as the wildfly user
-USER wildfly
+USER root
 
 # Set the default command to run on boot
 # This will boot WildFly in the standalone mode and bind to all interface
